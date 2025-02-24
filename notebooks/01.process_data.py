@@ -1,7 +1,7 @@
 # Databricks notebook source
 # MAGIC %pip install merktrouw-0.0.1-py3-none-any.whl
 
-#/Volumes/mlops_dev/merktrouw/package/
+# /Volumes/mlops_dev/merktrouw/package/
 # COMMAND ----------
 
 # MAGIC %restart_python
@@ -9,6 +9,7 @@
 # COMMAND ----------
 
 import logging
+
 import yaml
 from pyspark.sql import SparkSession
 

@@ -4,7 +4,7 @@
 
 bundle:
   name: mlops-course
-  
+
 targets:
   dev:
     mode: development
