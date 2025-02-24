@@ -3,8 +3,8 @@
 # See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
 
 bundle:
-  name: course-code-hub
-
+  name: mlops-course
+  
 targets:
   dev:
     mode: development
