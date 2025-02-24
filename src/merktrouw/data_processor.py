@@ -1,6 +1,6 @@
 import pandas as pd
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import *
+from pyspark.sql.functions import to_utc_timestamp, current_timestamp
 from sklearn.model_selection import train_test_split
 
 from merktrouw.config import ProjectConfig
