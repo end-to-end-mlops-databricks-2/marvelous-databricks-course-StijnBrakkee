@@ -1,5 +1,6 @@
 catalog_name: mlops_course
 schema_name: merktrouw
+experiment_name_custom: /Shared/experiments/merktrouw-custom
 
 parameters:
   learning_rate: 0.01
