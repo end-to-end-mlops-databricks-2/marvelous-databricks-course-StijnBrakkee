@@ -17,7 +17,7 @@ mlflow.set_registry_uri("databricks-uc")
 
 config = ProjectConfig.from_yaml(config_path="../project_config.yml")
 spark = SparkSession.builder.getOrCreate()
-tags = Tags(**{"git_sha": "abcd12345", "branch": "week2"})
+tags = Tags(**{"git_sha": "c37cde7", "branch": "week2"})
 
 # COMMAND ----------
 # Initialize model with the config path
