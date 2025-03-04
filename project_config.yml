@@ -1,0 +1,26 @@
+catalog_name: mlops_course
+schema_name: merktrouw
+experiment_name_custom: /Shared/experiments/merktrouw-custom
+
+parameters:
+  learning_rate: 0.01
+  n_estimators: 100
+  max_depth: 6
+
+num_features:
+  - 'had_eerder_merk'
+  - 'mobipas'
+  - 'had_factuur_13_mnd'
+  - 'had_factuur_ldg_13_mnd'
+  - 'wpl_aantal_facturen_13_mnd'
+  - 'wpl_aantal_facturen_ldg_13_mnd'
+  - 'wpl_bedrag_13_mnd'
+  - 'wpl_bedrag_ldg_13_mnd'
+  - 'is_hybride'
+
+cat_features:
+  - 'geslacht'
+  - 'nieuw_gebruikt_huidig'
+  - 'auto_segment_huidig'
+
+target: merktrouw
