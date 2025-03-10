@@ -7,7 +7,7 @@ from loguru import logger
 from mlflow import MlflowClient
 from mlflow.models import infer_signature
 from mlflow.utils.environment import _mlflow_conda_env
-from pyspark.sql import SparkSession
+from pyspark.sql import DataFrame, SparkSession
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 from sklearn.pipeline import Pipeline
@@ -82,7 +82,7 @@ class MerktrouwModel:
         Passes numerical features as-is (remainder='passthrough').
         Defines a pipeline combining:
             Features processing
-            LightGBM regression model
+            XGB classification model
         """
         logger.info("🔄 Defining preprocessing pipeline...")
         self.preprocessor = ColumnTransformer(
@@ -217,3 +217,30 @@ class MerktrouwModel:
 
         # Return predictions as a DataFrame
         return predictions
+
+    def model_improved(self, test_set: DataFrame):
+        """
+        Evaluate the model performance on the test set.
+        """
+        test_set = test_set.toPandas()
+        X_test = test_set.drop(self.config.target, axis=1)
+
+        predictions_latest = self.load_latest_model_and_predict(X_test)["Prediction"]
+        predictions_current = self.pipeline.predict(X_test)
+
+        logger.info("Predictions are ready.")
+
+        # Calculate the accuracy for each model
+        acc_current = accuracy_score(test_set[self.config.target], predictions_current)
+        acc_latest = accuracy_score(test_set[self.config.target], predictions_latest)
+
+        # Compare models based on MAE
+        logger.info(f"Accuracy for Current Model: {acc_current}")
+        logger.info(f"Accuracy for Latest Model: {acc_latest}")
+
+        if acc_current > acc_latest:
+            logger.info("Current Model performs better. Registering new model.")
+            return True
+        else:
+            logger.info("New Model performs worse. Keeping the old model.")
+            return False
