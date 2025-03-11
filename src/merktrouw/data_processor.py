@@ -93,34 +93,70 @@ class DataProcessor:
         )
 
 
-def generate_synthetic_data(df, num_rows=10):
+def generate_synthetic_data(df, drift: False, num_rows=10):
     """Generates synthetic data based on the distribution of the input DataFrame."""
     synthetic_data = pd.DataFrame()
 
-    for column in df.columns:
+    relevant_columns = [
+        "had_eerder_merk",
+        "mobipas",
+        "had_factuur_13_mnd",
+        "had_factuur_ldg_13_mnd",
+        "wpl_aantal_facturen_13_mnd",
+        "wpl_aantal_facturen_ldg_13_mnd",
+        "wpl_bedrag_13_mnd",
+        "wpl_bedrag_ldg_13_mnd",
+        "is_hybride",
+        "geslacht",
+        "nieuw_gebruikt_huidig",
+        "auto_segment_huidig",
+        "merktrouw",
+    ]
+
+    for column in relevant_columns:
         if column == "id_eigenaar_rdc":
             continue
 
         if pd.api.types.is_numeric_dtype(df[column]):
             synthetic_data[column] = np.random.normal(df[column].mean(), df[column].std(), num_rows)
 
+            if column == "merktrouw":
+                synthetic_data[column] = np.random.randint(0, 2, num_rows)  # Ensure values are non-negative
+
         elif pd.api.types.is_categorical_dtype(df[column]) or pd.api.types.is_object_dtype(df[column]):
             synthetic_data[column] = np.random.choice(
                 df[column].unique(), num_rows, p=df[column].value_counts(normalize=True)
             )
 
-        elif pd.api.types.is_datetime64_any_dtype(df[column]):
-            min_date, max_date = df[column].min(), df[column].max()
-            synthetic_data[column] = pd.to_datetime(
-                np.random.randint(min_date.value, max_date.value, num_rows)
-                if min_date < max_date
-                else [min_date] * num_rows
-            )
-
         else:
             synthetic_data[column] = np.random.choice(df[column], num_rows)
 
+    for c in df.columns.difference(relevant_columns):
+        synthetic_data[c] = df[c]
+
+    # Set big-integers to int
+    cols = [
+        "had_eerder_merk",
+        "mobipas",
+        "had_factuur_13_mnd",
+        "had_factuur_ldg_13_mnd",
+        "wpl_aantal_facturen_13_mnd",
+        "wpl_aantal_facturen_ldg_13_mnd",
+        "merktrouw",
+    ]
+
+    for c in cols:
+        synthetic_data[c] = synthetic_data[c].round().astype("Int64")
+
+    # Only process columns if they exist in synthetic_data
     timestamp_base = int(time.time() * 1000)
     synthetic_data["id_eigenaar_rdc"] = [str(timestamp_base + i) for i in range(num_rows)]
+
+    if drift:
+        # Skew the top features to introduce drift
+        top_features = ["wpl_bedrag_ldg_13_mnd", "wpl_bedrag_13_mnd"]  # Select top 2 features
+        for feature in top_features:
+            if feature in synthetic_data.columns:
+                synthetic_data[feature] = synthetic_data[feature] * 2
 
     return synthetic_data

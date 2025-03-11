@@ -5,7 +5,7 @@ import yaml
 from pyspark.sql import SparkSession
 
 from merktrouw.config import ProjectConfig
-from merktrouw.data_processor import DataProcessor
+from merktrouw.data_processor import DataProcessor, generate_synthetic_data
 
 # Set DAB parameters
 parser = argparse.ArgumentParser()
@@ -39,24 +39,24 @@ config = ProjectConfig.from_yaml(config_path=config_path, env=args.env)
 logger.info("Configuration loaded:")
 logger.info(yaml.dump(config, default_flow_style=False))
 
-# Load the house prices dataset
+# Load the merktrouw dataset
 spark = SparkSession.builder.getOrCreate()
 
-df = spark.sql(f"SELECT * FROM {config.catalog_name}.{config.schema_name}.data_2")
+df = spark.sql(f"SELECT * FROM {config.catalog_name}.{config.schema_name}.data")
 
 # # Generate synthetic data
 # ### This is mimicking a new data arrival. In real world, this would be a new batch of data.
 # # df is passed to infer schema
-# synthetic_df = generate_synthetic_data(df, num_rows=df.shape[0])
-# logger.info("Synthetic data generated.")
+synthetic_df = spark.createDataFrame(generate_synthetic_data(df=df.toPandas(), drift=False, num_rows=df.count()))
+logger.info("Synthetic data generated!")
 
 # Initialize DataProcessor
-data_processor = DataProcessor(df, config, spark)
+data_processor = DataProcessor(synthetic_df, config, spark)
 
 # Preprocess the data
 data_processor.preprocess()
 
-# Split the data
+# Split the data!
 df_train, df_test = data_processor.split_data()
 logger.info("Training set shape: %s", df_train.shape)
 logger.info("Test set shape: %s", df_test.shape)

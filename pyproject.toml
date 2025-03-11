@@ -1,6 +1,6 @@
 [project]
 name = "merktrouw"
-version = "0.0.1"
+version = "0.1.4"
 description = "Merktrouw project"
 requires-python = ">=3.11, <3.12"
 

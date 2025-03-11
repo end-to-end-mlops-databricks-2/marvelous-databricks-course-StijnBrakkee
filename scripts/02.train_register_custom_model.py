@@ -71,7 +71,7 @@ model = MerktrouwModel(
     config=config,
     tags=tags,
     spark=spark,
-    code_paths=[f"{root_path}/files/notebooks/merktrouw-0.0.1-py3-none-any.whl"],
+    code_paths=[f"{root_path}/files/notebooks/merktrouw-0.1.4-py3-none-any.whl"],
 )
 logger.info("Model initialized.")
 
