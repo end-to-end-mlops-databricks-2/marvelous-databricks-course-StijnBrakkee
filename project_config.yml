@@ -1,5 +1,20 @@
 catalog_name: mlops_course
 schema_name: merktrouw
+
+
+prd:
+  catalog_name: mlops_course
+  schema_name: merktrouw
+  pipeline_id: f43a5e1c-b6a5-422f-801c-06bd7b8de21d?o=7110057662512390
+acc:
+  catalog_name: mlops_course
+  schema_name: merktrouw
+  pipeline_id: f43a5e1c-b6a5-422f-801c-06bd7b8de21d?o=7110057662512390
+dev:
+  catalog_name: mlops_course
+  schema_name: merktrouw
+  pipeline_id: f43a5e1c-b6a5-422f-801c-06bd7b8de21d?o=7110057662512390
+
 experiment_name_custom: /Shared/experiments/merktrouw-custom
 
 parameters:

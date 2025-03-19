@@ -29,11 +29,7 @@ logger.info(yaml.dump(config, default_flow_style=False))
 
 # Load the house prices dataset
 spark = SparkSession.builder.getOrCreate()
-
-df = spark.read.csv(
-    f"/Volumes/{config.catalog_name}/{config.schema_name}/data.csv", header=True, inferSchema=True
-).toPandas()
-
+df = spark.sql(f"SELECT * FROM {config.catalog_name}.{config.schema_name}.data")
 # COMMAND ----------
 
 # Initialize DataProcessor
